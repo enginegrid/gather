@@ -319,6 +319,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_23_161808) do
     t.check_constraint "kind::text = ANY (ARRAY['drive'::character varying, 'folder'::character varying, 'file'::character varying]::text[])", name: "kind_enum"
   end
 
+  create_table "gdrive_migration_consent_requests", force: :cascade do |t|
+    t.bigint "cluster_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "file_count", null: false
+    t.string "google_email", limit: 255, null: false
+    t.bigint "operation_id", null: false
+    t.string "status", limit: 16, null: false
+    t.datetime "updated_at", null: false
+    t.index ["cluster_id"], name: "index_gdrive_migration_consent_requests_on_cluster_id"
+    t.index ["operation_id"], name: "index_gdrive_migration_consent_requests_on_operation_id"
+  end
+
   create_table "gdrive_migration_files", force: :cascade do |t|
     t.bigint "cluster_id", null: false
     t.datetime "created_at", null: false
@@ -1171,6 +1183,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_23_161808) do
   add_foreign_key "gdrive_item_groups", "groups"
   add_foreign_key "gdrive_items", "clusters"
   add_foreign_key "gdrive_items", "gdrive_configs"
+  add_foreign_key "gdrive_migration_consent_requests", "clusters"
+  add_foreign_key "gdrive_migration_consent_requests", "gdrive_migration_operations", column: "operation_id"
   add_foreign_key "gdrive_migration_files", "clusters"
   add_foreign_key "gdrive_migration_files", "gdrive_migration_operations", column: "operation_id"
   add_foreign_key "gdrive_migration_operations", "gdrive_configs", column: "config_id"
